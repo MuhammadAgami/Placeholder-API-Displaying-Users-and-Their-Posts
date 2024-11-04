@@ -1,40 +1,29 @@
 function getUser() {
-  var userRequest = new XMLHttpRequest();
-  userRequest.open("GET", "https://jsonplaceholder.typicode.com/users");
-  userRequest.responseType = "json";
-  userRequest.send();
-
-  userRequest.onload = function () {
-    if (userRequest.status === 200) {
-      const users = userRequest.response;
-
+  fetch("https://jsonplaceholder.typicode.com/users")
+    .then((response) => response.json())
+    .then((users) => {
+      document.getElementById("Users").innerHTML = "";
       for (const user of users) {
         document.getElementById("Users").innerHTML += `
-        <div onclick="clickUser(${user.id})" class="shadow p-3 mb-2 bg-body-tertiary rounded" style="cursor:pointer">
+        <div id="user-${user.id}" onclick="clickUser(${user.id})" class="shadow p-3 mb-2 bg-body-tertiary rounded" style="cursor:pointer">
             <h2>${user.name}</h2>
             <p>${user.email}</p>
         </div>
       `;
       }
-    } else {
-      console.error("Error:", userRequest.statusText);
-    }
-  };
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      document.getElementById(
+        "Users"
+      ).innerHTML = `<p>Error loading users. Please try again later.</p>`;
+    });
 }
 
 function getPosts(number) {
-  var postRequest = new XMLHttpRequest();
-  postRequest.open(
-    "GET",
-    `https://jsonplaceholder.typicode.com/posts?userId=${number}`
-  );
-  postRequest.responseType = "json";
-  postRequest.send();
-
-  postRequest.onload = function () {
-    if (postRequest.status === 200) {
-      const posts = postRequest.response;
-
+  fetch(`https://jsonplaceholder.typicode.com/posts?userId=${number}`)
+    .then((response) => response.json())
+    .then((posts) => {
       document.getElementById("Posts").innerHTML = "";
 
       for (const post of posts) {
@@ -44,14 +33,17 @@ function getPosts(number) {
           </div>
       `;
       }
-    } else {
-      console.error("Error:", postRequest.statusText);
-    }
-  };
+    });
 }
 
 function clickUser(id) {
+  document.querySelectorAll("#Users .active").forEach((element) => {
+    element.classList.remove("active");
+  });
+
+  document.getElementById(`user-${id}`).classList.add("active");
   getPosts(id);
 }
 
 getUser();
+
