@@ -1,7 +1,8 @@
 function getUser() {
-  fetch("https://jsonplaceholder.typicode.com/users")
-    .then((response) => response.json())
-    .then((users) => {
+  axios
+    .get("https://jsonplaceholder.typicode.com/users")
+    .then((response) => {
+      const users = response.data;
       document.getElementById("Users").innerHTML = "";
       for (const user of users) {
         document.getElementById("Users").innerHTML += `
@@ -21,9 +22,10 @@ function getUser() {
 }
 
 function getPosts(number) {
-  fetch(`https://jsonplaceholder.typicode.com/posts?userId=${number}`)
-    .then((response) => response.json())
-    .then((posts) => {
+  axios
+    .get(`https://jsonplaceholder.typicode.com/posts?userId=${number}`)
+    .then((response) => {
+      const posts = response.data;
       document.getElementById("Posts").innerHTML = "";
 
       for (const post of posts) {
@@ -33,6 +35,12 @@ function getPosts(number) {
           </div>
       `;
       }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      document.getElementById(
+        "Posts"
+      ).innerHTML = `<p>Error loading posts. Please try again later.</p>`;
     });
 }
 
@@ -46,4 +54,3 @@ function clickUser(id) {
 }
 
 getUser();
-
